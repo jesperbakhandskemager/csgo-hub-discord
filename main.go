@@ -26,7 +26,6 @@ type YAMLFile struct {
 }
 
 type Config struct {
-	STEAM_KEY     string `yaml:"STEAM_KEY"`
 	DISCORD_TOKEN string `yaml:"DISCORD_TOKEN"`
 }
 
