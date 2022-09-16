@@ -165,24 +165,6 @@ type userStruct struct {
 	FriendCode string `json:"friend_code"`
 }
 
-func GetFriendCode(users []string) []userStruct {
-	var userArr []userStruct
-	for _, u := range users {
-		resp, err := http.Get("http://localhost:8383/api/v1/user/" + u)
-		if err != nil {
-			log.Println(err)
-			log.Println("quiting")
-			return userArr
-		}
-		var userTemp userStruct
-		bodyBytes, _ := io.ReadAll(resp.Body)
-		resp.Body.Close()
-		json.Unmarshal(bodyBytes, &userTemp)
-		userArr = append(userArr, userTemp)
-	}
-	return userArr
-}
-
 func GetFriendCodes(users []string) []userStruct {
 	var userArr []userStruct
 
