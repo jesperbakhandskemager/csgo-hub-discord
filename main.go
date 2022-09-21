@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"flag"
 	"io"
 	"log"
@@ -15,7 +16,7 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-const API string = "https://steam.csgohub.xyz/"
+const API string = "http://localhost:8383/"
 
 var BotID string
 
@@ -79,8 +80,16 @@ var (
 	commandHandlers = map[string]func(s *discordgo.Session, i *discordgo.InteractionCreate){
 		"link-steam": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
 			if i.Member == nil {
-				token := GetToken(i.User.ID)
-
+				token, err := GetToken(i.User.ID)
+				if err != nil {
+					s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+						Type: discordgo.InteractionResponseChannelMessageWithSource,
+						Data: &discordgo.InteractionResponseData{
+							Content: "An error occured, try again later",
+						},
+					})
+					return
+				}
 				s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 					Type: discordgo.InteractionResponseChannelMessageWithSource,
 					Data: &discordgo.InteractionResponseData{
@@ -91,7 +100,16 @@ var (
 				return
 			}
 			sender := i.Member.User.ID
-			token := GetToken(sender)
+			token, err := GetToken(sender)
+			if err != nil {
+				s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+					Type: discordgo.InteractionResponseChannelMessageWithSource,
+					Data: &discordgo.InteractionResponseData{
+						Content: "An error occured, try again later",
+					},
+				})
+				return
+			}
 			userDM, err := s.UserChannelCreate(sender)
 			if err != nil {
 				log.Fatal(err)
@@ -110,7 +128,6 @@ var (
 				},
 			})
 			s.ChannelMessageSend(userDM.ID, API+token)
-
 		},
 		"show-team": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
 			// Find the guild for that channel.
@@ -191,17 +208,20 @@ func GetFriendCodes(users []string) []userStruct {
 	return userArr
 }
 
-func GetToken(discordId string) string {
+func GetToken(discordId string) (string, error) {
 	resp, err := http.Get("http://localhost:8383/api/v1/token/" + discordId)
 	if err != nil {
 		log.Println(err)
-		return ""
+		return "", errors.New("couldn't get token")
+	}
+	if resp.StatusCode != 200 {
+		return "", errors.New("an error occured")
 	}
 	defer resp.Body.Close()
 	bodyBytes, _ := io.ReadAll(resp.Body)
 	bodyString := strings.Replace(string(bodyBytes), "\"", "", -1)
 	println(bodyString)
-	return bodyString
+	return bodyString, nil
 }
 
 func main() {
