@@ -13,6 +13,8 @@
 
 # Config file
 config.yaml
+# Binary
+csgo-hub-discord
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
