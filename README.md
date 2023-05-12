@@ -1,10 +1,11 @@
 # CS:GO Hub Discord bot
 
 ## What does it do?
-This bot enables users to link their steam accounts to their discord accounts.
-When you are in a voice channel, you can use the /show-team command to show the CS:GO friend codes of the other users in voice who have linked their accounts
+This bot enables users to link their steam accounts with their discord accounts allowing friends to easily find your CS:GO friend code.
+When in a voice channel, you can use the `/show-team` command which will show the CS:GO friend codes of all other people in the same voice channel as you with a linked account.
 
 ## How do I set it up?
-You can use the official bot [default bot](https://discord.com/api/oauth2/authorize?client_id=1012444172369805342&permissions=551954680848&scope=applications.commands%20bot)
-
-Or you can set the backend up yourself found here: [csgo-hub-backend](https://github.com/jesperbakhandskemager/csgo-hub-backend)
+1. Setup the [backend](https://github.com/jesperbakhandskemager/csgo-hub-backend)
+2. Create a Discord bot at [Discord developer panel](https://discord.com/developers/applications)
+3. [Create an API key for Steam](https://steamcommunity.com/dev/apikey)
+4. Fill in any relevant information in the config.yaml file
